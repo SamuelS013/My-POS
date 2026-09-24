@@ -78,7 +78,7 @@ body {
 }
 
 .tasa-box input {
-    width: 80%;
+    width: 80px;
     padding: 4px 8px;
     border-radius: 4px;
     border: none;
@@ -169,6 +169,7 @@ body {
     padding: 20px;
     border-radius: 10px;
     box-shadow: var(--shadow);
+    display: block;
 }
 
 .pos-panel.hidden {
