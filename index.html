@@ -15,23 +15,23 @@
     <header class="main-header">
         <div class="header-container">
             <div class="brand-info">
-                <i class="fa-solid fa-bread-slice brand-icon"></i>
+                <img src="css/imagen/logo.jpg" class="brand-icon" alt="Logo"></i>
                 <div>
-                    <h1 class="brand-title">Panificadora Pachos</h1>
-                    <p class="brand-sub">Sistema de Ventas & Caja</p>
+                    <h1 class="brand-title">My POS</h1>
+                    <p class="brand-sub">Sistema de Ventas</p>
                 </div>
             </div>
             <!-- Tasa de Cambio Global -->
             <div class="tasa-box">
-                <label for="input-tasa"><i class="fa-solid fa-dollar-sign"></i> Tasa (Bs/$):</label>
-                <input type="number" id="input-tasa" value="36.50" step="0.10" min="1">
+                <label for="input-tasa"><i class="fa-solid fa-dollar-sign"></i></label>
+                <input type="number" id="input-tasa" placeholder="Act. Dólar" step="0.10" min="1">
             </div>
         </div>
     </header>
 
     <!-- BANNER INDICADOR EN MÓVIL PARA TASA -->
     <div class="tasa-mobile-bar">
-        <span>Tasa de Cambio actual: <strong>1 USD = <span id="tasa-mobile-val">36.50</span> Bs.</strong></span>
+        <span>Tasa de Cambio actual: <strong><span id="dolar">00</span></strong>
     </div>
 
     <!-- CONTENEDOR PRINCIPAL DE LA APP -->
@@ -47,7 +47,7 @@
                     <!-- PESTAÑAS: ENTRADA LIBRE VS CATÁLOGO -->
                     <div class="tab-selector">
                         <button class="tab-btn active" id="tab-btn-libre" onclick="cambiarModoPOS('libre')">
-                            <i class="fa-solid fa-pen-to-square"></i> Entrada Libre
+                            <i class="fa-solid fa-pen-to-square"></i> Venta Libre
                         </button>
                         <button class="tab-btn" id="tab-btn-catalogo" onclick="cambiarModoPOS('catalogo')">
                             <i class="fa-solid fa-store"></i> Catálogo
@@ -58,7 +58,7 @@
                     <div id="modo-libre" class="pos-panel active">
                         <form id="form-venta-libre" onsubmit="agregarItemLibre(event)">
                             <div class="form-group">
-                                <label for="libre-descripcion">Descripción del Producto / Pan</label>
+                                <label for="libre-descripcion">Producto</label>
                                 <input type="text" id="libre-descripcion" placeholder="Ej: Pan Sobado, Torta..." required>
                             </div>
 
@@ -125,9 +125,9 @@
                                 <div class="form-group">
                                     <label for="select-metodo-pago">Método de Pago:</label>
                                     <select id="select-metodo-pago" onchange="evaluarMetodoPago()">
-                                        <option value="Efectivo USD">Efectivo USD</option>
+                                        <option value="Efectivo USD">Efectivo (Bs.)</option>
                                         <option value="Pago Móvil / Transferencia">Pago Móvil / Transferencia (Bs)</option>
-                                        <option value="Mixto">Mixto (USD + Bs)</option>
+                                        <option value="Mixto">Mixto</option>
                                         <option value="Crédito">A Crédito (Faltante)</option>
                                     </select>
                                 </div>
