@@ -12,23 +12,52 @@ import {
 } from "./firebase.js";
 
 // --- ESTADO GLOBAL ---
-let tasaCambio = 36.50;
+let tasa = 36.50;
 let carrito = [];
 let ventas = [];
 let clientes = [];
 
 // Catálogo base de Panadería y Repostería
 const catalogoProductos = [
-    { id: 101, nombre: "Pan Campesino", precioDetal: 1.00, precioMayor: 0.85 },
-    { id: 102, nombre: "Pan Sobado", precioDetal: 1.20, precioMayor: 1.00 },
-    { id: 103, nombre: "Pan de Queso", precioDetal: 2.00, precioMayor: 1.80 },
-    { id: 104, nombre: "Golfeado", precioDetal: 1.50, precioMayor: 1.25 },
-    { id: 105, nombre: "Torta de Vainilla", precioDetal: 12.00, precioMayor: 10.00 }
+    { id: 101, nombre: "Pan Salado", precioDetal: 1.60, precioMayor: 1.00 },
+    { id: 102, nombre: "Pan Dulce", precioDetal: 1.60, precioMayor: 1.00 },
+    { id: 103, nombre: "Acema", precioDetal: 1.00, precioMayor: 0.50 },
+    { id: 104, nombre: "Torta (Trozo)", precioDetal: 0.90, precioMayor: 0.50 },
+    { id: 105, nombre: "Cannolo", precioDetal: 0.90, precioMayor: 0.50 },
+    { id: 106, nombre: "Palitos Palmeritas", precioDetal: 0.90, precioMayor: 0.40 },
+    { id: 107, nombre: "Palmeritas", precioDetal: 0.90, precioMayor: 0.55 }
 ];
+
+//FUNCION PARA EL DOLAR AUTOMATICO
+const dolar = document.getElementById('dolar')
+let valorDolar;
+
+async function actualizarDolar() {
+  const url = 'https://ve.dolarapi.com/v1/dolares/oficial';
+  
+  try {
+    const respuesta = await fetch(url);
+    const datos = await respuesta.json();
+    
+    // El valor está en datos.promedio
+    valorDolar = datos.promedio.toFixed(2);
+
+    if (dolar){
+      dolar.textContent = `${valorDolar} Bs.`;
+    }
+    
+    tasa = valorDolar;
+
+  } catch (error) {
+    console.error('Error al obtener el dólar:', error);
+    document.getElementById('dolar').textContent = '000.00 bs';
+  }
+}
 
 // --- INICIALIZACIÓN ---
 document.addEventListener("DOMContentLoaded", () => {
     actualizarTasa();
+    actualizarDolar();
     renderizarCatalogo();
 
     // Escuchar Ventas desde Firebase en tiempo real
@@ -50,9 +79,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const inputTasa = document.getElementById("input-tasa");
     if (inputTasa) {
         inputTasa.addEventListener("change", (e) => {
-            tasaCambio = parseFloat(e.target.value) || 1;
-            const elTasaMobile = document.getElementById("tasa-mobile-val");
-            if (elTasaMobile) elTasaMobile.innerText = tasaCambio.toFixed(2);
+            tasa = parseFloat(e.target.value) || 1;
+            const elTasaMobile = document.getElementById("dolar");
+            if (elTasaMobile) elTasaMobile.innerText = tasa.toFixed(2);
             actualizarTotalesCarrito();
             renderizarTablaClientes();
         });
@@ -90,7 +119,7 @@ window.cambiarModoPOS = function(modo) {
 // ACTUALIZAR TASA DE CAMBIO
 function actualizarTasa() {
     const input = document.getElementById("input-tasa");
-    if (input) tasaCambio = parseFloat(input.value) || 36.50;
+    if (input) tasa = parseFloat(input.value);
 }
 
 // RENDERIZAR CATÁLOGO
@@ -190,7 +219,7 @@ window.vaciarCarrito = function() {
 // ACTUALIZAR TOTALES CARRITO
 function actualizarTotalesCarrito() {
     const totalUSD = carrito.reduce((acc, item) => acc + item.subtotal, 0);
-    const totalBs = totalUSD * tasaCambio;
+    const totalBs = totalUSD * tasa;
 
     const elTotalUsd = document.getElementById("total-usd");
     const elTotalBs = document.getElementById("total-bs");
@@ -214,7 +243,7 @@ window.procesarVenta = async function() {
     }
 
     const totalUSD = carrito.reduce((acc, item) => acc + item.subtotal, 0);
-    const totalBs = totalUSD * tasaCambio;
+    const totalBs = totalUSD * tasa;
     const metodo = document.getElementById("select-metodo-pago").value;
     let clienteId = null;
 
@@ -236,7 +265,7 @@ window.procesarVenta = async function() {
         items: [...carrito],
         totalUSD,
         totalBs,
-        tasaAplicada: tasaCambio,
+        tasaAplicada: tasa,
         metodo,
         clienteId: clienteId || null,
         estado: "Completada"
@@ -332,7 +361,7 @@ function renderizarTablaClientes() {
 
     clientes.forEach(c => {
         const deudaUSD = c.deudaUSD || 0;
-        const deudaBs = deudaUSD * tasaCambio;
+        const deudaBs = deudaUSD * tasa;
         const tr = document.createElement("tr");
         tr.innerHTML = `
             <td>#${c.id.toString().slice(-4)}</td>
