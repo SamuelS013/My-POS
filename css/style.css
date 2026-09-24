@@ -4,14 +4,14 @@
    ========================================================== */
 
 :root {
-    --primary-color: #183618;     /* Verde Pachos Principal */
+    --primary-color: #1E2D24;     /* Verde Pachos Principal */
     --primary-hover: #234d23;
     --bg-light: #f7f9f7;          /* Fondo suave */
     --card-bg: #ffffff;
-    --accent-gold: #d4a373;       /* Tono pan/horno */
+    --accent-gold: #91AEC1;       /* Tono pan/horno */
     --text-dark: #2b2d42;
     --text-muted: #6c757d;
-    --danger-color: #e76f51;       /* Rojo/Terracota para anulaciones */
+    --danger-color: #53131E;       /* Rojo/Terracota para anulaciones */
     --success-color: #2a9d8f;      /* Verde para confirmar */
     --border-color: #e2e8f0;
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -39,6 +39,7 @@ body {
 }
 
 .header-container {
+    width: 100%;
     max-width: 1200px;
     margin: 0 auto;
     display: flex;
@@ -53,8 +54,8 @@ body {
 }
 
 .brand-icon {
-    font-size: 1.8rem;
-    color: var(--accent-gold);
+    width: 50px;
+    height: auto;
 }
 
 .brand-title {
@@ -77,7 +78,7 @@ body {
 }
 
 .tasa-box input {
-    width: 80px;
+    width: 80%;
     padding: 4px 8px;
     border-radius: 4px;
     border: none;
@@ -86,8 +87,8 @@ body {
 }
 
 .tasa-mobile-bar {
-    background: var(--accent-gold);
-    color: #333;
+    background: var(--text-muted);
+    color: var(--text-dark);
     text-align: center;
     padding: 6px;
     font-size: 0.85rem;
@@ -368,7 +369,7 @@ body {
     bottom: 0;
     left: 0;
     width: 100%;
-    background: white;
+    background: var(--primary-color);
     display: flex;
     justify-content: space-around;
     padding: 10px 0;
@@ -390,7 +391,29 @@ body {
 }
 
 .nav-item i { font-size: 1.2rem; }
-.nav-item.active { color: var(--primary-color); font-weight: bold; }
+.nav-item.active { color: var(--card-bg); font-weight: bold; }
 
 /* UTILITIES */
 .hidden { display: none !important; }
+
+@media (max-width: 481px){
+
+    .pos-panel {
+        display: flex;
+        flex-direction: column;
+    }
+
+    #form-venta-libre {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-row {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .creditos-layout .card button {
+        margin-bottom: 10px;
+    }
+}
