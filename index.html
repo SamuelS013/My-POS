@@ -15,7 +15,7 @@
     <header class="main-header">
         <div class="header-container">
             <div class="brand-info">
-                <img src="css/imagen/logo.jpg" class="brand-icon" alt="Logo"></i>
+                <img src="css/imagen/logo.jpg" class="brand-icon" alt="Logo">
                 <div>
                     <h1 class="brand-title">My POS</h1>
                     <p class="brand-sub">Sistema de Ventas</p>
@@ -31,7 +31,7 @@
 
     <!-- BANNER INDICADOR EN MÓVIL PARA TASA -->
     <div class="tasa-mobile-bar">
-        <span>Tasa de Cambio actual: <strong><span id="dolar">00</span></strong>
+        <span>Tasa de Cambio actual: <strong><span id="dolar">00</span></strong></span>
     </div>
 
     <!-- CONTENEDOR PRINCIPAL DE LA APP -->
@@ -40,22 +40,22 @@
         <!-- SECCIÓN 1: PUNTO DE VENTA (POS) -->
         <section id="sec-pos" class="app-section active">
             <div class="pos-grid">
-                
+
                 <!-- COLUMNA IZQUIERDA: ENTRADA DE PRODUCTO -->
                 <div class="pos-left">
-                    
-                    <!-- PESTAÑAS: ENTRADA LIBRE VS CATÁLOGO -->
+
+                    <!-- PESTAÑAS: CATÁLOGO / VENTA LIBRE (Catálogo por defecto) -->
                     <div class="tab-selector">
-                        <button class="tab-btn active" id="tab-btn-libre" onclick="cambiarModoPOS('libre')">
-                            <i class="fa-solid fa-pen-to-square"></i> Venta Libre
-                        </button>
-                        <button class="tab-btn" id="tab-btn-catalogo" onclick="cambiarModoPOS('catalogo')">
+                        <button class="tab-btn active" id="tab-btn-catalogo" onclick="cambiarModoPOS('catalogo')">
                             <i class="fa-solid fa-store"></i> Catálogo
+                        </button>
+                        <button class="tab-btn" id="tab-btn-libre" onclick="cambiarModoPOS('libre')">
+                            <i class="fa-solid fa-pen-to-square"></i> Venta Libre
                         </button>
                     </div>
 
                     <!-- MODO 1: VENTA LIBRE -->
-                    <div id="modo-libre" class="pos-panel active">
+                    <div id="modo-libre" class="pos-panel hidden">
                         <form id="form-venta-libre" onsubmit="agregarItemLibre(event)">
                             <div class="form-group">
                                 <label for="libre-descripcion">Producto</label>
@@ -80,14 +80,14 @@
                     </div>
 
                     <!-- MODO 2: CATÁLOGO DE PRODUCTOS -->
-                    <div id="modo-catalogo" class="pos-panel hidden">
+                    <div id="modo-catalogo" class="pos-panel active">
                         <!-- SELECTOR TIPO DE PRECIO -->
                         <div class="precio-tipo-selector">
                             <span>Tipo de Precio:</span>
                             <label><input type="radio" name="tipoPrecio" value="detal" checked onchange="renderizarCatalogo()"> Detal</label>
                             <label><input type="radio" name="tipoPrecio" value="mayor" onchange="renderizarCatalogo()"> Mayor</label>
                         </div>
-                        
+
                         <!-- GRID DE PRODUCTOS -->
                         <div class="catalogo-grid" id="catalogo-grid-container">
                             <!-- Se llena dinámicamente desde JS -->
