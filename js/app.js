@@ -1,7 +1,7 @@
 /* ==========================================================
-   PANIFICADORA PACHOS - SISTEMA POS
-   APP.JS - Inicialización, dólar, navegación
-   ========================================================== */
+PANIFICADORA PACHOS - SISTEMA POS
+APP.JS - Inicialización, dólar, navegación
+========================================================== */
 
 import { escucharVentas, escucharClientes } from "./firebase.js";
 import { state } from "./state.js";
@@ -45,6 +45,39 @@ window.navegarA = function(secId, btnElement) {
     if (secId === 'sec-reportes') calcularMetricasReportes();
 };
 
+// FUNCIÓN PARA VERIFICAR Y REINICIAR VENTAS DEL DÍA A MEDIANOCHE
+function verificarReinicioDiario() {
+    const fechaActual = new Date().toDateString();
+    if (state.fechaUltimoReinicio !== fechaActual) {
+        // Es un nuevo día, reiniciar ventas del día
+        state.ventasDelDia = [];
+        state.fechaUltimoReinicio = fechaActual;
+        console.log("Historial de ventas del día reiniciado automáticamente.");
+        
+        // Actualizar vistas si es necesario
+        if (typeof renderizarTablaVentas === 'function') renderizarTablaVentas();
+        if (typeof calcularMetricasReportes === 'function') calcularMetricasReportes();
+    }
+}
+
+// Programar verificación a medianoche
+function programarReinicioMedianoche() {
+    const ahora = new Date();
+    const manana = new Date(ahora);
+    manana.setDate(manana.getDate() + 1);
+    manana.setHours(0, 0, 0, 0);
+    
+    const msHastaMedianoche = manana.getTime() - ahora.getTime();
+    
+    setTimeout(() => {
+        verificarReinicioDiario();
+        // Reprogramar para la siguiente medianoche
+        programarReinicioMedianoche();
+    }, msHastaMedianoche);
+    
+    console.log(`Reinicio diario programado en ${Math.round(msHastaMedianoche / 1000 / 60)} minutos.`);
+}
+
 // --- INICIALIZACIÓN ---
 document.addEventListener("DOMContentLoaded", () => {
     const input = document.getElementById("input-tasa");
@@ -56,9 +89,22 @@ document.addEventListener("DOMContentLoaded", () => {
     actualizarDolar();
     renderizarCatalogo();
 
+    // Verificar reinicio diario al cargar
+    verificarReinicioDiario();
+    programarReinicioMedianoche();
+
     // Escuchar Ventas desde Firebase en tiempo real
     escucharVentas((datosVentas) => {
         state.ventas = datosVentas;
+        
+        // Filtrar ventas del día actual
+        const hoy = new Date().toDateString();
+        state.ventasDelDia = datosVentas.filter(v => {
+            if (!v.fecha) return false;
+            const fechaVenta = v.fecha?.toDate ? v.fecha.toDate() : new Date();
+            return fechaVenta.toDateString() === hoy;
+        });
+        
         renderizarTablaVentas();
         calcularMetricasReportes();
     });

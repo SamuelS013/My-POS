@@ -173,7 +173,8 @@ window.procesarVenta = async function() {
         tasaAplicada: state.tasa,
         metodo,
         clienteId: clienteId || null,
-        estado: "Completada"
+        estado: "Completada",
+        esAbono: false
     };
 
     try {

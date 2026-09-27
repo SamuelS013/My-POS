@@ -6,23 +6,44 @@
 import { anularVentaFirebase, actualizarDeudaClienteFirebase } from "./firebase.js";
 import { state } from "./state.js";
 
-// RENDERIZAR TABLA DE VENTAS
+// RENDERIZAR TABLA DE VENTAS (SIN ID, SOLO VENTAS DEL DÍA)
 window.renderizarTablaVentas = function() {
     const tbody = document.getElementById("tabla-ventas-body");
     if (!tbody) return;
     tbody.innerHTML = "";
 
-    state.ventas.forEach(v => {
+    // Usar ventasDelDia para mostrar solo las del día actual
+    const ventasAMostrar = state.ventasDelDia.length > 0 ? state.ventasDelDia : state.ventas.filter(v => {
+        if (!v.fecha) return false;
+        const fechaVenta = v.fecha?.toDate ? v.fecha.toDate() : new Date();
+        return fechaVenta.toDateString() === new Date().toDateString();
+    });
+
+    if (ventasAMostrar.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:20px; color:#888;">No hay ventas registradas hoy.</td></tr>`;
+        return;
+    }
+
+    ventasAMostrar.forEach(v => {
         const tr = document.createElement("tr");
         const fechaObj = v.fecha?.toDate ? v.fecha.toDate() : new Date();
         const hora = fechaObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        const detalle = v.items ? v.items.map(i => `${i.cantidad}x ${i.descripcion}`).join(", ") : "-";
+        
+        // Detalle: si es abono, mostrar nombre + "(Abono)"
+        let detalle;
+        if (v.esAbono) {
+            detalle = `${v.descripcion || 'Cliente'} (Abono)`;
+        } else {
+            detalle = v.items ? v.items.map(i => `${i.cantidad}x ${i.descripcion}`).join(", ") : "-";
+        }
+
+        // Método: para abonos mostrar "-"
+        const metodoMostrar = v.esAbono ? "-" : (v.metodo || "-");
 
         tr.innerHTML = `
-            <td>#${v.id.toString().slice(-4)}</td>
             <td>${hora}</td>
             <td><small>${detalle}</small></td>
-            <td>${v.metodo}</td>
+            <td>${metodoMostrar}</td>
             <td><strong>$${(v.totalUSD || 0).toFixed(2)}</strong></td>
             <td>${(v.totalBs || 0).toFixed(2)} Bs.</td>
             <td><span style="color: ${v.estado==='Anulada'?'red':'green'}">${v.estado}</span></td>
@@ -42,13 +63,25 @@ window.anularVenta = async function(id) {
     if (venta) {
         try {
             await anularVentaFirebase(id);
-            if (venta.metodo === "Crédito" && venta.clienteId) {
+            
+            // Si era un abono, revertir la deuda del cliente
+            if (venta.esAbono && venta.clienteId) {
+                const cli = state.clientes.find(c => c.id === venta.clienteId);
+                if (cli) {
+                    const nuevaDeuda = (cli.deudaUSD || 0) + venta.totalUSD;
+                    await actualizarDeudaClienteFirebase(venta.clienteId, nuevaDeuda);
+                }
+            }
+            
+            // Si era venta a crédito, revertir deuda
+            if (venta.metodo === "Crédito" && venta.clienteId && !venta.esAbono) {
                 const cli = state.clientes.find(c => c.id === venta.clienteId);
                 if (cli) {
                     const nuevaDeuda = Math.max(0, (cli.deudaUSD || 0) - venta.totalUSD);
                     await actualizarDeudaClienteFirebase(venta.clienteId, nuevaDeuda);
                 }
             }
+            
             alert("Venta anulada con éxito.");
         } catch (e) {
             alert("Error al anular la venta.");
