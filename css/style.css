@@ -1,18 +1,14 @@
-/* ==========================================================
-   PANIFICADORA PACHOS - SISTEMA POS
-   Estilos CSS con paleta Verde Principal (#183618)
-   ========================================================== */
-
 :root {
-    --primary-color: #1E2D24;     /* Verde Pachos Principal */
+    --primary-color: #1C3B34;     /* Verde Pachos Principal */
     --primary-hover: #234d23;
     --bg-light: #f7f9f7;          /* Fondo suave */
     --card-bg: #ffffff;
     --accent-gold: #91AEC1;       /* Tono pan/horno */
     --text-dark: #2b2d42;
     --text-muted: #6c757d;
-    --danger-color: #53131E;       /* Rojo/Terracota para anulaciones */
-    --success-color: #2a9d8f;      /* Verde para confirmar */
+    --gris-claro: #5F5C6A;
+    --danger-color: #BA5955;       /* Rojo/Terracota para anulaciones */
+    --success-color: #56B39D;      /* Verde para confirmar */
     --border-color: #e2e8f0;
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
@@ -88,10 +84,15 @@ body {
 
 .tasa-mobile-bar {
     background: var(--text-muted);
-    color: var(--text-dark);
+    color: #000;
+    font-weight: 600;
     text-align: center;
     padding: 6px;
     font-size: 0.85rem;
+}
+
+.tasa-mobile-bar span {
+    font-weight: 700;
 }
 
 /* --- LAYOUT Y CONTENEDOR --- */
