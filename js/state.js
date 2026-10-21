@@ -22,5 +22,6 @@ export const catalogoProductos = [
     { nombre: "Torta (Trozo)", precioDetal: 0.90, precioMayor: 0.50 },
     { nombre: "Cannolo", precioDetal: 0.90, precioMayor: 0.50 },
     { nombre: "Palmeritas", precioDetal: 0.90, precioMayor: 0.55 },
+    { nombre: "Corbatas", precioDetal: 0.28, precioMayor: 0.16 },
     { nombre: "Galleta", precioDetal: 0.0, precioMayor: 0.0 }
 ];
