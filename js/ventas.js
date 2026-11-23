@@ -61,6 +61,37 @@ window.anularVenta = async function(id) {
 
     const venta = state.ventas.find(v => v.id === id);
     if (venta) {
+        if (!navigator.onLine) {
+            const escrituras = [anularVentaFirebase(id)];
+
+            if (venta.esAbono && venta.clienteId) {
+                const cli = state.clientes.find(c => c.id === venta.clienteId);
+                if (cli) {
+                    escrituras.push(actualizarDeudaClienteFirebase(
+                        venta.clienteId,
+                        (cli.deudaUSD || 0) + venta.totalUSD
+                    ));
+                }
+            }
+
+            if (venta.metodo === "Crédito" && venta.clienteId && !venta.esAbono) {
+                const cli = state.clientes.find(c => c.id === venta.clienteId);
+                if (cli) {
+                    escrituras.push(actualizarDeudaClienteFirebase(
+                        venta.clienteId,
+                        Math.max(0, (cli.deudaUSD || 0) - venta.totalUSD)
+                    ));
+                }
+            }
+
+            Promise.all(escrituras).catch(error => {
+                console.error("No se pudo sincronizar la anulación guardada sin conexión:", error);
+                alert("No se pudo sincronizar la anulación. Revise la conexión e inténtelo de nuevo.");
+            });
+            alert("Anulación guardada en este dispositivo. Se sincronizará al recuperar internet.");
+            return;
+        }
+
         try {
             await anularVentaFirebase(id);
             

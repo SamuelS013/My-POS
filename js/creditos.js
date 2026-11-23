@@ -16,11 +16,21 @@ window.crearCliente = async function(e) {
     const idCorto = String(Date.now()).slice(-3);
 
     try {
-        await guardarClienteFirebase({ 
+        const promesaGuardado = guardarClienteFirebase({
             nombre, 
             telefono,
             idCorto: idCorto
         });
+        if (!navigator.onLine) {
+            document.getElementById("form-nuevo-cliente").reset();
+            promesaGuardado.catch(error => {
+                console.error("No se pudo sincronizar el cliente guardado sin conexión:", error);
+                alert("No se pudo sincronizar el cliente. Revise la conexión e inténtelo de nuevo.");
+            });
+            alert("Cliente guardado en este dispositivo. Se sincronizará al recuperar internet.");
+            return;
+        }
+        await promesaGuardado;
         document.getElementById("form-nuevo-cliente").reset();
         alert("Cliente registrado correctamente.");
     } catch (e) {
@@ -59,7 +69,6 @@ window.renderizarTablaClientes = function() {
         
         const tr = document.createElement("tr");
         tr.innerHTML = `
-            <td>#${idMostrar}</td>
             <td>${c.nombre}</td>
             <td>${c.telefono}</td>
             <td><strong style="color:${deudaUSD > 0 ? 'red' : 'green'}">$${deudaUSD.toFixed(2)}</strong></td>
@@ -83,6 +92,29 @@ window.abonarDeuda = async function(clienteId) {
         const deudaActual = cli.deudaUSD || 0;
         const montoReal = Math.min(monto, deudaActual); // No abonar más de lo que debe
         const nuevaDeuda = Math.max(0, deudaActual - montoReal);
+
+        if (!navigator.onLine) {
+            const escrituras = [
+                actualizarDeudaClienteFirebase(clienteId, nuevaDeuda),
+                guardarVentaFirebase({
+                    items: [],
+                    totalUSD: montoReal,
+                    totalBs: montoReal * state.tasa,
+                    tasaAplicada: state.tasa,
+                    metodo: "-",
+                    clienteId: clienteId,
+                    estado: "Completada",
+                    esAbono: true,
+                    descripcion: cli.nombre
+                })
+            ];
+            Promise.all(escrituras).catch(error => {
+                console.error("No se pudo sincronizar el abono guardado sin conexión:", error);
+                alert("No se pudo sincronizar el abono. Revise la conexión e inténtelo de nuevo.");
+            });
+            alert("Abono guardado en este dispositivo. Se sincronizará al recuperar internet.");
+            return;
+        }
 
         try {
             // Actualizar deuda del cliente

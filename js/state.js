@@ -4,7 +4,7 @@
    ========================================================== */
 
 export const state = {
-    tasa: 36.50,
+    tasa: 0.00,
     carrito: [],
     ventas: [],
     clientes: [],
@@ -17,11 +17,11 @@ export const state = {
 export const catalogoProductos = [
     { nombre: "Pan Salado", precioDetal: 1.60, precioMayor: 1.00 },
     { nombre: "Pan Dulce", precioDetal: 1.60, precioMayor: 1.00 },
-    { nombre: "Acema", precioDetal: 0.90, precioMayor: 0.50 },
-    { nombre: "Palitos de Palmerita", precioDetal: 0.90, precioMayor: 0.40 },
-    { nombre: "Torta (Trozo)", precioDetal: 0.90, precioMayor: 0.50 },
-    { nombre: "Cannolo", precioDetal: 0.90, precioMayor: 0.50 },
-    { nombre: "Palmeritas", precioDetal: 0.90, precioMayor: 0.55 },
-    { nombre: "Corbatas", precioDetal: 0.28, precioMayor: 0.16 },
-    { nombre: "Galleta", precioDetal: 0.0, precioMayor: 0.0 }
+    { nombre: "Acema", precioDetal: 1.00, precioMayor: 0.50 },
+    { nombre: "Palitos de Palmerita", precioDetal: 0.95, precioMayor: 0.40 },
+    { nombre: "Torta (Trozo)", precioDetal: 1.10, precioMayor: 0.50 },
+    { nombre: "Cannolo", precioDetal: 1.00, precioMayor: 0.50 },
+    { nombre: "Palmeritas", precioDetal: 1.00, precioMayor: 0.55 },
+    { nombre: "Corbatas", precioDetal: 0.30, precioMayor: 0.18 },
+    { nombre: "Galleta", precioDetal: 0.00, precioMayor: 0.00 }
 ];

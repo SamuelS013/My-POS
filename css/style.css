@@ -13,6 +13,14 @@
     --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
+.offline-status {
+    padding: 10px 16px;
+    background: #fff3cd;
+    color: #664d03;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
 * {
     margin: 0;
     padding: 0;

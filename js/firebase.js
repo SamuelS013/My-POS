@@ -4,7 +4,10 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { 
-    getFirestore, 
+    initializeFirestore,
+    persistentLocalCache,
+    persistentMultipleTabManager,
+    CACHE_SIZE_UNLIMITED,
     collection, 
     addDoc, 
     doc, 
@@ -27,7 +30,12 @@ const firebaseConfig = {
 
 // Inicializar App y Firestore
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
+export const db = initializeFirestore(app, {
+    localCache: persistentLocalCache({
+        cacheSizeBytes: CACHE_SIZE_UNLIMITED,
+        tabManager: persistentMultipleTabManager()
+    })
+});
 
 /* ----------------------------------------------------------
    MÉTODOS DE BASE DE DATOS (FIRESTORE)

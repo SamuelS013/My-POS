@@ -28,17 +28,16 @@
                     <p class="brand-sub">Sistema de Ventas</p>
                 </div>
             </div>
-            <!-- Tasa de Cambio Global -->
-            <div class="tasa-box">
-                <label for="input-tasa"><i class="fa-solid fa-dollar-sign"></i></label>
-                <input type="number" id="input-tasa" placeholder="Act. Dólar" step="0.10" min="1">
-            </div>
         </div>
     </header>
 
+    <div id="offline-status" class="offline-status" role="status" aria-live="polite" hidden>
+        Sin conexión. Los datos guardados se pueden consultar y los cambios se sincronizarán al recuperar internet.
+    </div>
+
     <!-- BANNER INDICADOR EN MÓVIL PARA TASA -->
     <div class="tasa-mobile-bar">
-        <span>Tasa de Cambio actual: <strong><span id="dolar">00</span></strong></span>
+        <span>Valor actual del dólar: <strong><span id="dolar">00</span></strong></span>
     </div>
 
     <!-- CONTENEDOR PRINCIPAL DE LA APP -->
@@ -132,17 +131,18 @@
                                 <div class="form-group">
                                     <label for="select-metodo-pago">Método de Pago:</label>
                                     <select id="select-metodo-pago" onchange="evaluarMetodoPago()">
-                                        <option value="Efectivo USD">Efectivo (Bs.)</option>
-                                        <option value="Pago Móvil / Transferencia">Pago Móvil / Transferencia (Bs)</option>
+                                        <option value="Efectivo USD">Efectivo</option>
+                                        <option value="Pago Móvil / Transferencia">Pago Móvil / Transferencia</option>
+                                        <option value="Punto de Venta">Punto de Venta</option>
                                         <option value="Mixto">Mixto</option>
-                                        <option value="Crédito">A Crédito (Faltante)</option>
+                                        <option value="Crédito">A Crédito</option>
                                     </select>
                                 </div>
 
                                 <div class="form-group hidden" id="group-cliente-credito">
                                     <label for="select-cliente-credito">Seleccionar Cliente a Crédito:</label>
                                     <select id="select-cliente-credito">
-                                        <option value="">-- Seleccionar Cliente --</option>
+                                        <option value="">Seleccionar Cliente</option>
                                     </select>
                                 </div>
                             </div>
@@ -161,14 +161,12 @@
         <section id="sec-ventas" class="app-section hidden">
             <div class="section-title">
                 <h2><i class="fa-solid fa-clock-rotate-left"></i> Historial de Ventas</h2>
-                <p>Gestiona y consulta el registro diario de transacciones</p>
             </div>
 
             <div class="table-responsive">
                 <table class="custom-table">
                     <thead>
                         <tr>
-                            <th># ID</th>
                             <th>Hora</th>
                             <th>Detalle</th>
                             <th>Método</th>
@@ -218,7 +216,6 @@
                         <table class="custom-table">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
                                     <th>Cliente</th>
                                     <th>Teléfono</th>
                                     <th>Deuda ($)</th>
@@ -275,7 +272,7 @@
 
             <div class="report-actions">
                 <button class="btn btn-danger btn-lg" onclick="imprimirReportePDF()">
-                    <i class="fa-solid fa-file-pdf"></i> Exportar Cierre / Reporte en PDF
+                    <i class="fa-solid fa-file-pdf"></i>Reporte en PDF
                 </button>
             </div>
         </section>

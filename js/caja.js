@@ -152,6 +152,7 @@ window.procesarVenta = async function() {
     const totalBs = totalUSD * state.tasa;
     const metodo = document.getElementById("select-metodo-pago").value;
     let clienteId = null;
+    let promesaDeuda = null;
 
     if (metodo === "Crédito") {
         clienteId = document.getElementById("select-cliente-credito").value;
@@ -162,7 +163,8 @@ window.procesarVenta = async function() {
         const cli = state.clientes.find(c => c.id === clienteId);
         if (cli) {
             const nuevaDeuda = (cli.deudaUSD || 0) + totalUSD;
-            await actualizarDeudaClienteFirebase(clienteId, nuevaDeuda);
+            promesaDeuda = actualizarDeudaClienteFirebase(clienteId, nuevaDeuda);
+            if (navigator.onLine) await promesaDeuda;
         }
     }
 
@@ -176,6 +178,18 @@ window.procesarVenta = async function() {
         estado: "Completada",
         esAbono: false
     };
+
+    if (!navigator.onLine) {
+        const escrituras = [guardarVentaFirebase(nuevaVenta)];
+        if (promesaDeuda) escrituras.unshift(promesaDeuda);
+        Promise.all(escrituras).catch(error => {
+            console.error("No se pudo sincronizar la venta guardada sin conexión:", error);
+            alert("No se pudo sincronizar la venta. Revise la conexión e inténtelo de nuevo.");
+        });
+        alert("Venta guardada en este dispositivo. Se sincronizará al recuperar internet.");
+        vaciarCarrito();
+        return;
+    }
 
     try {
         await guardarVentaFirebase(nuevaVenta);

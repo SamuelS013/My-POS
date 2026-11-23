@@ -19,16 +19,48 @@ async function actualizarDolar() {
     const url = 'https://ve.dolarapi.com/v1/dolares/oficial';
     try {
         const respuesta = await fetch(url);
+        if (!respuesta.ok) throw new Error(`Respuesta HTTP ${respuesta.status}`);
         const datos = await respuesta.json();
-        const valorDolar = datos.promedio.toFixed(2);
+        const promedio = Number(datos.promedio);
+        if (!Number.isFinite(promedio) || promedio <= 0) {
+            throw new Error("La API devolvió una tasa de cambio inválida.");
+        }
+        const valorDolar = promedio.toFixed(2);
         if (dolar) {
             dolar.textContent = `${valorDolar} Bs.`;
         }
         state.tasa = parseFloat(valorDolar);
+        try {
+            localStorage.setItem("my-pos-tasa", valorDolar);
+        } catch (error) {
+            console.warn("No se pudo guardar la tasa de cambio localmente:", error);
+        }
     } catch (error) {
         console.error('Error al obtener el dólar:', error);
-        if (dolar) dolar.textContent = '000.00 bs';
+        let tasaGuardada = 0;
+        try {
+            tasaGuardada = Number(localStorage.getItem("my-pos-tasa"));
+        } catch (storageError) {
+            console.warn("No se pudo leer la tasa de cambio guardada:", storageError);
+        }
+        const tasaDisponible = tasaGuardada > 0 ? tasaGuardada : state.tasa;
+        if (tasaDisponible > 0) {
+            state.tasa = tasaDisponible;
+            if (dolar) dolar.textContent = `${tasaDisponible.toFixed(2)} Bs.`;
+        } else if (dolar) {
+            dolar.textContent = 'Sin conexión';
+        }
     }
+}
+
+function actualizarEstadoConexion() {
+    const indicador = document.getElementById("offline-status");
+    if (indicador) indicador.hidden = navigator.onLine;
+}
+
+if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./sw.js")
+        .catch(error => console.error("No se pudo registrar el service worker:", error));
 }
 
 // NAVEGACIÓN ENTRE SECCIONES
@@ -80,6 +112,10 @@ function programarReinicioMedianoche() {
 
 // --- INICIALIZACIÓN ---
 document.addEventListener("DOMContentLoaded", () => {
+    actualizarEstadoConexion();
+    window.addEventListener("online", actualizarEstadoConexion);
+    window.addEventListener("offline", actualizarEstadoConexion);
+
     const input = document.getElementById("input-tasa");
     if (input) state.tasa = parseFloat(input.value) || 36.50;
 
