@@ -23,5 +23,4 @@ export const catalogoProductos = [
     { nombre: "Cannolo", precioDetal: 1.00, precioMayor: 0.50 },
     { nombre: "Palmeritas", precioDetal: 1.00, precioMayor: 0.55 },
     { nombre: "Corbatas", precioDetal: 0.30, precioMayor: 0.18 },
-    { nombre: "Galleta", precioDetal: 0.00, precioMayor: 0.00 }
 ];
