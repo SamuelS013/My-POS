@@ -11,6 +11,7 @@ import {
     collection, 
     addDoc, 
     doc, 
+    setDoc,
     updateDoc, 
     onSnapshot,
     query,
@@ -42,13 +43,17 @@ export const db = initializeFirestore(app, {
    ---------------------------------------------------------- */
 
 // --- VENTAS ---
-export async function guardarVentaFirebase(ventaData) {
+export async function guardarVentaFirebase(ventaId, ventaData) {
     try {
-        const docRef = await addDoc(collection(db, "ventas"), {
-            ...ventaData,
+        const datosPersistibles = { ...ventaData };
+        delete datosPersistibles.id;
+        delete datosPersistibles.sincronizada;
+        await setDoc(doc(db, "ventas", ventaId), {
+            ...datosPersistibles,
+            estado: "Completada",
             fecha: serverTimestamp()
         });
-        return docRef.id;
+        return ventaId;
     } catch (e) {
         console.error("Error guardando venta: ", e);
         throw e;
@@ -63,9 +68,7 @@ export function escucharVentas(callback) {
             return {
                 id: doc.id,
                 ...venta,
-                estado: doc.metadata.hasPendingWrites && venta.estado === "Completada"
-                    ? "En espera"
-                    : venta.estado
+                _pendienteServidor: doc.metadata.hasPendingWrites
             };
         });
         callback(ventas);

@@ -1,5 +1,5 @@
 import { anularVentaFirebase, actualizarDeudaClienteFirebase } from "./firebase.js";
-import { state } from "./state.js";
+import { state, fechaVentaADate } from "./state.js";
 
 // RENDERIZAR TABLA DE VENTAS (SIN ID, SOLO VENTAS DEL DÍA)
 window.renderizarTablaVentas = function() {
@@ -9,9 +9,8 @@ window.renderizarTablaVentas = function() {
 
     // Usar ventasDelDia para mostrar solo las del día actual
     const ventasAMostrar = state.ventasDelDia.length > 0 ? state.ventasDelDia : state.ventas.filter(v => {
-        if (!v.fecha) return false;
-        const fechaVenta = v.fecha?.toDate ? v.fecha.toDate() : new Date();
-        return fechaVenta.toDateString() === new Date().toDateString();
+        const fechaVenta = fechaVentaADate(v.fecha);
+        return fechaVenta?.toDateString() === new Date().toDateString();
     });
 
     if (ventasAMostrar.length === 0) {
@@ -21,7 +20,7 @@ window.renderizarTablaVentas = function() {
 
     ventasAMostrar.forEach(v => {
         const tr = document.createElement("tr");
-        const fechaObj = v.fecha?.toDate ? v.fecha.toDate() : new Date();
+        const fechaObj = fechaVentaADate(v.fecha) || new Date();
         const hora = fechaObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         
         // Detalle: si es abono, mostrar nombre + "(Abono)"

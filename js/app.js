@@ -4,6 +4,11 @@ APP.JS - Inicialización, dólar, navegación
 ========================================================== */
 
 import { escucharVentas, escucharClientes } from "./firebase.js";
+import {
+    actualizarVentasDesdeFirestore,
+    inicializarVentasLocales,
+    sincronizarVentasPendientes
+} from "./ventas-locales.js";
 import { state } from "./state.js";
 
 // Importar los módulos para que registren sus funciones en window
@@ -115,6 +120,14 @@ document.addEventListener("DOMContentLoaded", () => {
     actualizarEstadoConexion();
     window.addEventListener("online", actualizarEstadoConexion);
     window.addEventListener("offline", actualizarEstadoConexion);
+    window.addEventListener("online", () => void sincronizarVentasPendientes());
+
+    try {
+        inicializarVentasLocales();
+    } catch (error) {
+        console.error("No se pudieron inicializar las ventas locales:", error);
+        alert("No se pudieron cargar las ventas guardadas en este dispositivo.");
+    }
 
     const input = document.getElementById("input-tasa");
     if (input) state.tasa = parseFloat(input.value) || 36.50;
@@ -131,19 +144,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Escuchar Ventas desde Firebase en tiempo real
     escucharVentas((datosVentas) => {
-        state.ventas = datosVentas;
-        
-        // Filtrar ventas del día actual
-        const hoy = new Date().toDateString();
-        state.ventasDelDia = datosVentas.filter(v => {
-            if (!v.fecha) return false;
-            const fechaVenta = v.fecha?.toDate ? v.fecha.toDate() : new Date();
-            return fechaVenta.toDateString() === hoy;
-        });
-        
-        renderizarTablaVentas();
-        calcularMetricasReportes();
+        actualizarVentasDesdeFirestore(datosVentas);
     });
+    void sincronizarVentasPendientes();
 
     // Escuchar Clientes desde Firebase en tiempo real
     escucharClientes((datosClientes) => {

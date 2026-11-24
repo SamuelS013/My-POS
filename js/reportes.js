@@ -3,7 +3,7 @@
    REPORTES.JS - Métricas y cierre de caja
    ========================================================== */
 
-import { state } from "./state.js";
+import { state, fechaVentaADate } from "./state.js";
 
 // REPORTES Y CIERRE
 window.calcularMetricasReportes = function() {
@@ -11,9 +11,7 @@ window.calcularMetricasReportes = function() {
     const hoy = new Date().toDateString();
     
     const ventasDelDia = state.ventas.filter(v => {
-        if (!v.fecha) return false;
-        const fechaVenta = v.fecha?.toDate ? v.fecha.toDate() : new Date();
-        return fechaVenta.toDateString() === hoy;
+        return fechaVentaADate(v.fecha)?.toDateString() === hoy;
     });
 
     // Ventas diarias: solo ventas reales (no abonos, no créditos)
@@ -48,8 +46,8 @@ window.calcularMetricasReportes = function() {
     
     const ventasSemana = state.ventas.filter(v => {
         if (!v.fecha || v.estado !== "Completada" || v.esAbono || v.metodo === "Crédito") return false;
-        const fechaVenta = v.fecha?.toDate ? v.fecha.toDate() : new Date();
-        return fechaVenta >= hace7Dias;
+        const fechaVenta = fechaVentaADate(v.fecha);
+        return fechaVenta && fechaVenta >= hace7Dias;
     }).reduce((acc, v) => acc + (v.totalUSD || 0), 0);
 
     // Ventas mensuales (últimos 30 días) - sin créditos ni abonos
@@ -58,8 +56,8 @@ window.calcularMetricasReportes = function() {
     
     const ventasMes = state.ventas.filter(v => {
         if (!v.fecha || v.estado !== "Completada" || v.esAbono || v.metodo === "Crédito") return false;
-        const fechaVenta = v.fecha?.toDate ? v.fecha.toDate() : new Date();
-        return fechaVenta >= hace30Dias;
+        const fechaVenta = fechaVentaADate(v.fecha);
+        return fechaVenta && fechaVenta >= hace30Dias;
     }).reduce((acc, v) => acc + (v.totalUSD || 0), 0);
 
     const elDia = document.getElementById("m-ventas-dia");

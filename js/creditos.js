@@ -3,7 +3,8 @@
    CREDITOS.JS - Clientes, deudas y abonos
    ========================================================== */
 
-import { guardarClienteFirebase, actualizarDeudaClienteFirebase, guardarVentaFirebase } from "./firebase.js";
+import { guardarClienteFirebase, actualizarDeudaClienteFirebase } from "./firebase.js";
+import { registrarVentaLocal } from "./ventas-locales.js";
 import { state } from "./state.js";
 
 // CREAR CLIENTE (ID de 3 dígitos)
@@ -93,33 +94,7 @@ window.abonarDeuda = async function(clienteId) {
         const montoReal = Math.min(monto, deudaActual); // No abonar más de lo que debe
         const nuevaDeuda = Math.max(0, deudaActual - montoReal);
 
-        if (!navigator.onLine) {
-            const escrituras = [
-                actualizarDeudaClienteFirebase(clienteId, nuevaDeuda),
-                guardarVentaFirebase({
-                    items: [],
-                    totalUSD: montoReal,
-                    totalBs: montoReal * state.tasa,
-                    tasaAplicada: state.tasa,
-                    metodo: "-",
-                    clienteId: clienteId,
-                    estado: "Completada",
-                    esAbono: true,
-                    descripcion: cli.nombre
-                })
-            ];
-            Promise.all(escrituras).catch(error => {
-                console.error("No se pudo sincronizar el abono guardado sin conexión:", error);
-                alert("No se pudo sincronizar el abono. Revise la conexión e inténtelo de nuevo.");
-            });
-            alert("Abono guardado en este dispositivo. Se sincronizará al recuperar internet.");
-            return;
-        }
-
         try {
-            // Actualizar deuda del cliente
-            await actualizarDeudaClienteFirebase(clienteId, nuevaDeuda);
-
             // Registrar el abono como una venta en el historial
             const totalBs = montoReal * state.tasa;
             const nuevoAbono = {
@@ -129,14 +104,19 @@ window.abonarDeuda = async function(clienteId) {
                 tasaAplicada: state.tasa,
                 metodo: "-",
                 clienteId: clienteId,
-                estado: "Completada",
+                estado: "En espera",
                 esAbono: true,
                 descripcion: cli.nombre
             };
 
-            await guardarVentaFirebase(nuevoAbono);
-
-            alert(`Abono de $${montoReal.toFixed(2)} registrado correctamente.`);
+            const abono = await registrarVentaLocal(nuevoAbono);
+            actualizarDeudaClienteFirebase(clienteId, nuevaDeuda).catch(error => {
+                console.error("No se pudo sincronizar la deuda del cliente:", error);
+                alert("El abono quedó guardado, pero no se pudo actualizar la deuda del cliente.");
+            });
+            alert(abono.estado === "Completada"
+                ? `Abono de $${montoReal.toFixed(2)} registrado correctamente.`
+                : "Abono guardado en este dispositivo. Estado: En espera. Se sincronizará al recuperar internet.");
         } catch (e) {
             console.error(e);
             alert("Error al registrar el abono.");

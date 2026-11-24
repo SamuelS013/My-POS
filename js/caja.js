@@ -3,7 +3,8 @@
    CAJA.JS - Punto de venta: venta libre, catálogo y carrito
    ========================================================== */
 
-import { guardarVentaFirebase, actualizarDeudaClienteFirebase } from "./firebase.js";
+import { actualizarDeudaClienteFirebase } from "./firebase.js";
+import { registrarVentaLocal } from "./ventas-locales.js";
 import { state, catalogoProductos } from "./state.js";
 
 // CAMBIO DE MODO EN POS (Entrada libre / Catálogo)
@@ -141,7 +142,7 @@ window.evaluarMetodoPago = function() {
     if (groupCliente) groupCliente.classList.toggle("hidden", metodo !== "Crédito");
 };
 
-// PROCESAR VENTA EN FIREBASE
+// GUARDAR VENTA LOCALMENTE Y SINCRONIZARLA CON FIREBASE
 window.procesarVenta = async function() {
     if (state.carrito.length === 0) {
         alert("El carrito está vacío.");
@@ -152,7 +153,7 @@ window.procesarVenta = async function() {
     const totalBs = totalUSD * state.tasa;
     const metodo = document.getElementById("select-metodo-pago").value;
     let clienteId = null;
-    let promesaDeuda = null;
+    let deudaPendiente = null;
 
     if (metodo === "Crédito") {
         clienteId = document.getElementById("select-cliente-credito").value;
@@ -162,9 +163,10 @@ window.procesarVenta = async function() {
         }
         const cli = state.clientes.find(c => c.id === clienteId);
         if (cli) {
-            const nuevaDeuda = (cli.deudaUSD || 0) + totalUSD;
-            promesaDeuda = actualizarDeudaClienteFirebase(clienteId, nuevaDeuda);
-            if (navigator.onLine) await promesaDeuda;
+            deudaPendiente = {
+                clienteId,
+                nuevaDeuda: (cli.deudaUSD || 0) + totalUSD
+            };
         }
     }
 
@@ -175,27 +177,24 @@ window.procesarVenta = async function() {
         tasaAplicada: state.tasa,
         metodo,
         clienteId: clienteId || null,
-        estado: "Completada",
+        estado: "En espera",
         esAbono: false
     };
 
-    if (!navigator.onLine) {
-        const escrituras = [guardarVentaFirebase(nuevaVenta)];
-        if (promesaDeuda) escrituras.unshift(promesaDeuda);
-        Promise.all(escrituras).catch(error => {
-            console.error("No se pudo sincronizar la venta guardada sin conexión:", error);
-            alert("No se pudo sincronizar la venta. Revise la conexión e inténtelo de nuevo.");
-        });
-        alert("Venta guardada en este dispositivo. Se sincronizará al recuperar internet.");
-        vaciarCarrito();
-        return;
-    }
-
     try {
-        await guardarVentaFirebase(nuevaVenta);
-        alert("¡Venta registrada con éxito!");
+        const venta = await registrarVentaLocal(nuevaVenta);
+        if (deudaPendiente) {
+            actualizarDeudaClienteFirebase(deudaPendiente.clienteId, deudaPendiente.nuevaDeuda).catch(error => {
+                console.error("No se pudo sincronizar la deuda del cliente:", error);
+                alert("La venta quedó guardada, pero no se pudo actualizar la deuda del cliente.");
+            });
+        }
+        alert(venta.estado === "Completada"
+            ? "¡Venta registrada con éxito!"
+            : "Venta guardada en este dispositivo. Estado: En espera. Se sincronizará al recuperar internet.");
         vaciarCarrito();
-    } catch (e) {
-        alert("Error al guardar la venta en Firebase.");
+    } catch (error) {
+        console.error("No se pudo guardar la venta en este dispositivo:", error);
+        alert("No se pudo guardar la venta en este dispositivo. No se vació el carrito.");
     }
 };

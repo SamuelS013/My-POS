@@ -1,5 +1,5 @@
 const CACHE_PREFIX = "my-pos";
-const SHELL_CACHE = `${CACHE_PREFIX}-shell-v2`;
+const SHELL_CACHE = `${CACHE_PREFIX}-shell-v3`;
 const RUNTIME_CACHE = `${CACHE_PREFIX}-runtime-v1`;
 const PRECACHE_URLS = [
     "./",
@@ -18,6 +18,7 @@ const PRECACHE_URLS = [
     "./js/app.js",
     "./js/state.js",
     "./js/firebase.js",
+    "./js/ventas-locales.js",
     "./js/caja.js",
     "./js/ventas.js",
     "./js/creditos.js",

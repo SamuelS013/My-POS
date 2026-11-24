@@ -13,6 +13,16 @@ export const state = {
     fechaUltimoReinicio: new Date().toDateString()
 };
 
+export function fechaVentaADate(fecha) {
+    if (fecha instanceof Date) return Number.isNaN(fecha.getTime()) ? null : fecha;
+    if (fecha?.toDate) return fecha.toDate();
+    if (typeof fecha === "string" || typeof fecha === "number") {
+        const fechaConvertida = new Date(fecha);
+        return Number.isNaN(fechaConvertida.getTime()) ? null : fechaConvertida;
+    }
+    return null;
+}
+
 // Catálogo de productos predefinidos
 export const catalogoProductos = [
     { nombre: "Pan Salado", precioDetal: 1.60, precioMayor: 1.00 },
