@@ -57,11 +57,17 @@ export async function guardarVentaFirebase(ventaData) {
 
 export function escucharVentas(callback) {
     const q = query(collection(db, "ventas"), orderBy("fecha", "desc"));
-    return onSnapshot(q, (snapshot) => {
-        const ventas = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }));
+    return onSnapshot(q, { includeMetadataChanges: true }, (snapshot) => {
+        const ventas = snapshot.docs.map(doc => {
+            const venta = doc.data();
+            return {
+                id: doc.id,
+                ...venta,
+                estado: doc.metadata.hasPendingWrites && venta.estado === "Completada"
+                    ? "En espera"
+                    : venta.estado
+            };
+        });
         callback(ventas);
     });
 }

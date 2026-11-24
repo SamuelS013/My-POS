@@ -1,8 +1,3 @@
-/* ==========================================================
-   PANIFICADORA PACHOS - SISTEMA POS
-   VENTAS.JS - Historial de ventas y anulación
-   ========================================================== */
-
 import { anularVentaFirebase, actualizarDeudaClienteFirebase } from "./firebase.js";
 import { state } from "./state.js";
 
@@ -39,6 +34,7 @@ window.renderizarTablaVentas = function() {
 
         // Método: para abonos mostrar "-"
         const metodoMostrar = v.esAbono ? "-" : (v.metodo || "-");
+        const colorEstado = v.estado === "Anulada" ? "red" : v.estado === "En espera" ? "#b7791f" : "green";
 
         tr.innerHTML = `
             <td>${hora}</td>
@@ -46,7 +42,7 @@ window.renderizarTablaVentas = function() {
             <td>${metodoMostrar}</td>
             <td><strong>$${(v.totalUSD || 0).toFixed(2)}</strong></td>
             <td>${(v.totalBs || 0).toFixed(2)} Bs.</td>
-            <td><span style="color: ${v.estado==='Anulada'?'red':'green'}">${v.estado}</span></td>
+            <td><span style="color: ${colorEstado}">${v.estado}</span></td>
             <td>
                 ${v.estado === 'Completada' ? `<button class="btn btn-danger" style="padding:4px 8px; font-size:0.8rem;" onclick="anularVenta('${v.id}')">Anular</button>` : '-'}
             </td>
