@@ -15,6 +15,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Estilos Personalizados -->
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/pos.css">
+    <link rel="stylesheet" href="css/ventas.css">
+    <link rel="stylesheet" href="css/creditos.css">
+    <link rel="stylesheet" href="css/reportes.css">
 </head>
 <body>
 
@@ -22,7 +26,7 @@
     <header class="main-header">
         <div class="header-container">
             <div class="brand-info">
-                <img src="css/imagen/logo.jpg" class="brand-icon" alt="Logo">
+                <img src="css/icons/perfil-white.png" class="brand-icon" alt="Logo">
                 <div>
                     <h1 class="brand-title">My POS</h1>
                     <p class="brand-sub">Sistema de Ventas</p>
@@ -44,7 +48,7 @@
     <main class="app-container">
 
         <!-- SECCIÓN 1: PUNTO DE VENTA (POS) -->
-        <section id="sec-pos" class="app-section active">
+        <section id="sec-pos" class="app-section active pos-section">
             <div class="pos-grid">
 
                 <!-- COLUMNA IZQUIERDA: ENTRADA DE PRODUCTO -->
@@ -158,7 +162,7 @@
         </section>
 
         <!-- SECCIÓN 2: HISTORIAL DE VENTAS -->
-        <section id="sec-ventas" class="app-section hidden">
+        <section id="sec-ventas" class="app-section hidden sales-section">
             <div class="section-title">
                 <h2><i class="fa-solid fa-clock-rotate-left"></i> Historial de Ventas</h2>
             </div>
@@ -184,7 +188,7 @@
         </section>
 
         <!-- SECCIÓN 3: GESTIÓN DE CRÉDITOS -->
-        <section id="sec-creditos" class="app-section hidden">
+        <section id="sec-creditos" class="app-section hidden credits-section">
             <div class="section-title">
                 <h2><i class="fa-solid fa-users-rectangle"></i> Control de Créditos y Clientes</h2>
                 <p>Registro de cuentas por cobrar y abonos</p>
@@ -192,21 +196,27 @@
 
             <div class="creditos-layout">
                 <!-- FORMULARIO NUEVO CLIENTE -->
-                <div class="card">
-                    <h3>Registrar Nuevo Cliente</h3>
-                    <form id="form-nuevo-cliente" onsubmit="crearCliente(event)">
-                        <div class="form-group">
-                            <label for="cliente-nombre">Nombre Completo</label>
-                            <input type="text" id="cliente-nombre" placeholder="Ej: Juan Pérez" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="cliente-telefono">Teléfono</label>
-                            <input type="tel" id="cliente-telefono" placeholder="Ej: 04141234567" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-block">
-                            <i class="fa-solid fa-user-plus"></i> Guardar Cliente
-                        </button>
-                    </form>
+                <div class="nuevo-cliente-section">
+                    <button type="button" class="btn btn-primary btn-block" onclick="toggleNuevoClienteForm()">
+                        <i class="fa-solid fa-user-plus"></i> Registrar Nuevo Cliente
+                    </button>
+                    <div class="nuevo-cliente-modal hidden" onclick="cerrarNuevoClienteAlFondo(event)">
+                        <form id="form-nuevo-cliente" class="nuevo-cliente-dialog" onsubmit="crearCliente(event)" role="dialog" aria-modal="true" aria-labelledby="nuevo-cliente-titulo">
+                            <h3 id="nuevo-cliente-titulo">Registrar Nuevo Cliente</h3>
+                            <div class="form-group">
+                                <label for="nuevo-cliente-nombre">Nombre completo:</label>
+                                <input type="text" id="nuevo-cliente-nombre" name="nombre" placeholder="Ej: Juan Pérez" autocomplete="name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="nuevo-cliente-telefono">Teléfono:</label>
+                                <input type="tel" id="nuevo-cliente-telefono" name="telefono" placeholder="Ej: +58 412 1234567" autocomplete="tel" required>
+                            </div>
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-success"><i class="fa-solid fa-check"></i> Guardar</button>
+                                <button type="button" class="btn btn-secondary" onclick="toggleNuevoClienteForm()"><i class="fa-solid fa-times"></i> Cancelar</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
 
                 <!-- LISTA DE CLIENTES CON DEUDA -->
@@ -233,10 +243,10 @@
         </section>
 
         <!-- SECCIÓN 4: REPORTES Y CIERRE DE CAJA -->
-        <section id="sec-reportes" class="app-section hidden">
+        <section id="sec-reportes" class="app-section hidden reports-section">
             <div class="section-title">
-                <h2><i class="fa-solid fa-chart-pie"></i> Reportes y Cierre de Caja</h2>
-                <p>Resumen analítico de ingresos y balance</p>
+                <h2><i class="fa-solid fa-chart-pie"></i> Reportes</h2>
+                <p>Resumen analítico de ingresos y ventas</p>
             </div>
 
             <div class="metrics-grid">

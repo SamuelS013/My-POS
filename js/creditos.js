@@ -7,12 +7,38 @@ import { guardarClienteFirebase, actualizarDeudaClienteFirebase } from "./fireba
 import { registrarVentaLocal } from "./ventas-locales.js";
 import { state } from "./state.js";
 
+const formularioNuevoCliente = () => document.getElementById("form-nuevo-cliente");
+const modalNuevoCliente = () => document.querySelector(".nuevo-cliente-modal");
+
+window.toggleNuevoClienteForm = function() {
+    const modal = modalNuevoCliente();
+    const formulario = formularioNuevoCliente();
+    if (!modal || !formulario) return;
+
+    const abrir = modal.classList.contains("hidden");
+    modal.classList.toggle("hidden", !abrir);
+    if (abrir) {
+        document.getElementById("nuevo-cliente-nombre")?.focus();
+    } else {
+        formulario.reset();
+    }
+};
+
+window.cerrarNuevoClienteAlFondo = function(event) {
+    if (event.target === event.currentTarget) window.toggleNuevoClienteForm();
+};
+
 // CREAR CLIENTE (ID de 3 dígitos)
 window.crearCliente = async function(e) {
     e.preventDefault();
-    const nombre = document.getElementById("cliente-nombre").value;
-    const telefono = document.getElementById("cliente-telefono").value;
+    const nombre = document.getElementById("nuevo-cliente-nombre").value.trim();
+    const telefono = document.getElementById("nuevo-cliente-telefono").value.trim();
+    const formulario = formularioNuevoCliente();
 
+    if (!nombre || !telefono) {
+        formulario?.reportValidity();
+        return;
+    }
     // Generar ID de 3 dígitos basado en timestamp
     const idCorto = String(Date.now()).slice(-3);
 
@@ -23,7 +49,8 @@ window.crearCliente = async function(e) {
             idCorto: idCorto
         });
         if (!navigator.onLine) {
-            document.getElementById("form-nuevo-cliente").reset();
+            formulario?.reset();
+            modalNuevoCliente()?.classList.add("hidden");
             promesaGuardado.catch(error => {
                 console.error("No se pudo sincronizar el cliente guardado sin conexión:", error);
                 alert("No se pudo sincronizar el cliente. Revise la conexión e inténtelo de nuevo.");
@@ -32,12 +59,20 @@ window.crearCliente = async function(e) {
             return;
         }
         await promesaGuardado;
-        document.getElementById("form-nuevo-cliente").reset();
+        formulario?.reset();
+        modalNuevoCliente()?.classList.add("hidden");
         alert("Cliente registrado correctamente.");
-    } catch (e) {
-        alert("Error al crear el cliente.");
+    } catch (error) {
+        console.error("No se pudo registrar el cliente:", error);
+        alert("Error al crear el cliente. Revise la conexión e inténtelo de nuevo.");
     }
 };
+
+document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && !modalNuevoCliente()?.classList.contains("hidden")) {
+        window.toggleNuevoClienteForm();
+    }
+});
 
 // ACTUALIZAR SELECT DE CLIENTES (para créditos en POS)
 window.actualizarSelectClientes = function() {

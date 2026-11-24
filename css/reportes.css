@@ -1,0 +1,30 @@
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.metric-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: var(--shadow);
+}
+
+.metric-icon {
+    color: var(--primary-color);
+    font-size: 2rem;
+}
+
+.metric-card.alert .metric-icon {
+    color: var(--danger-color);
+}
+
+.report-actions {
+    display: flex;
+    justify-content: flex-end;
+}
