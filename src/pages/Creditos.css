@@ -1,0 +1,416 @@
+.creditos-container {
+    width: min(100%, 1200px);
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.creditos-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.creditos-header h1 {
+    margin: 0;
+    color: var(--primary-color);
+}
+
+.creditos-header p {
+    margin: 6px 0 0;
+    color: var(--text-muted);
+}
+
+.credito-nuevo-btn,
+.credito-guardar-btn {
+    min-height: 44px;
+    padding: 0 18px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--primary-color);
+    color: #fff;
+    font-weight: 700;
+    transition: filter 0.18s, transform 0.18s;
+}
+
+.credito-nuevo-btn:hover,
+.credito-guardar-btn:hover:not(:disabled) {
+    filter: brightness(1.12);
+    transform: translateY(-1px);
+}
+
+.credito-guardar-btn:disabled {
+    cursor: wait;
+    opacity: 0.65;
+}
+
+.creditos-mensaje,
+.creditos-error {
+    margin: 0 0 14px;
+    padding: 11px 14px;
+    border-radius: 8px;
+}
+
+.creditos-mensaje {
+    background: #e9f4ed;
+    color: #26734d;
+}
+
+.creditos-error {
+    background: #fbe9e8;
+    color: var(--danger-color);
+    font-size: 0.9rem;
+}
+
+.nuevo-cliente-form {
+    margin-bottom: 24px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--card-bg);
+    box-shadow: var(--shadow);
+    animation: credito-panel-entrada 0.2s ease-out both;
+}
+
+.nuevo-cliente-form h2 {
+    margin: 0 0 16px;
+    color: var(--primary-color);
+    font-size: 1.15rem;
+}
+
+.nuevo-cliente-campos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.nuevo-cliente-campos label,
+.abono-dialog form > label {
+    display: grid;
+    gap: 7px;
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    font-weight: 600;
+}
+
+.nuevo-cliente-campos input,
+.busqueda-clientes input,
+.abono-monto-input input {
+    width: 100%;
+    min-height: 44px;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--text-dark);
+}
+
+.nuevo-cliente-campos input:focus,
+.busqueda-clientes input:focus,
+.abono-monto-input input:focus {
+    border-color: var(--primary-color);
+    outline: 2px solid rgba(28, 59, 52, 0.14);
+}
+
+.creditos-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.lista-clientes {
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--card-bg);
+    box-shadow: var(--shadow);
+}
+
+.lista-clientes-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.lista-clientes-header h2 {
+    margin: 0;
+    color: var(--primary-color);
+}
+
+.lista-clientes-header > div > span {
+    display: inline-block;
+    margin-top: 4px;
+    color: var(--text-muted);
+    font-size: 0.88rem;
+}
+
+.busqueda-clientes {
+    width: min(100%, 300px);
+}
+
+.clientes-filtros {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    padding: 4px;
+    border-radius: 999px;
+    background: var(--bg-light);
+}
+
+.clientes-filtro-btn {
+    min-height: 38px;
+    padding: 7px 16px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--text-muted);
+    font-weight: 650;
+    transition: background-color 0.18s, color 0.18s;
+}
+
+.clientes-filtro-btn.active {
+    background: var(--primary-color);
+    color: #fff;
+}
+
+.clientes-lista {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.cliente-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 14px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    background: #fff;
+}
+
+.cliente-datos {
+    display: grid;
+    min-width: 0;
+    flex: 1;
+    gap: 5px;
+}
+
+.cliente-datos strong {
+    overflow-wrap: anywhere;
+    color: var(--text-dark);
+}
+
+.cliente-datos span,
+.cliente-saldo > span {
+    color: var(--text-muted);
+    font-size: 0.88rem;
+}
+
+.cliente-saldo {
+    display: grid;
+    gap: 4px;
+    text-align: right;
+}
+
+.cliente-saldo strong {
+    font-size: 1.05rem;
+}
+
+.cliente-saldo strong.deuda-activa {
+    color: var(--danger-color);
+}
+
+.cliente-abonar-btn {
+    min-height: 38px;
+    padding: 0 14px;
+    border: 1px solid var(--primary-color);
+    border-radius: 7px;
+    background: #fff;
+    color: var(--primary-color);
+    font-weight: 700;
+    transition: background-color 0.18s, color 0.18s;
+}
+
+.cliente-abonar-btn:hover {
+    background: var(--primary-color);
+    color: #fff;
+}
+
+.clientes-estado {
+    margin: 0;
+    padding: 30px 12px;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    clip-path: inset(50%);
+}
+
+.abono-overlay {
+    position: fixed;
+    z-index: 1200;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    overflow-y: auto;
+    padding: 18px;
+    background: rgba(20, 32, 28, 0.58);
+    animation: credito-overlay-entrada 0.16s ease-out both;
+}
+
+.abono-dialog {
+    width: min(100%, 420px);
+    padding: 24px;
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    background: var(--card-bg);
+    box-shadow: 0 18px 50px rgba(0, 0, 0, 0.24);
+    animation: credito-panel-entrada 0.2s ease-out both;
+}
+
+.abono-dialog h2 {
+    margin: 0 0 14px;
+    color: var(--primary-color);
+}
+
+.abono-cliente {
+    margin: 0 0 6px;
+    font-weight: 700;
+}
+
+.abono-deuda {
+    margin: 0 0 18px;
+    color: var(--text-muted);
+}
+
+.abono-deuda strong {
+    color: var(--text-dark);
+}
+
+.abono-monto-input {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 7px;
+}
+
+.abono-monto-input > span {
+    color: var(--text-muted);
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.abono-cancelar-btn {
+    min-height: 44px;
+    padding: 0 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--text-dark);
+    font-weight: 650;
+}
+
+.abono-cancelar-btn:disabled {
+    cursor: wait;
+    opacity: 0.65;
+}
+
+@keyframes credito-overlay-entrada {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes credito-panel-entrada {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 600px) {
+    .creditos-container {
+        padding: 16px 14px;
+    }
+
+    .creditos-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .credito-nuevo-btn {
+        width: 100%;
+    }
+
+    .nuevo-cliente-campos {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .lista-clientes {
+        padding: 16px;
+    }
+
+    .lista-clientes-header {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .busqueda-clientes {
+        width: 100%;
+    }
+
+    .cliente-card {
+        flex-wrap: wrap;
+        gap: 12px;
+        padding: 13px;
+    }
+
+    .cliente-datos {
+        flex-basis: calc(100% - 1px);
+    }
+
+    .cliente-saldo {
+        flex: 1;
+        text-align: left;
+    }
+
+    .creditos-form-actions > button {
+        flex: 1;
+    }
+
+    .abono-dialog {
+        padding: 20px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .nuevo-cliente-form,
+    .abono-dialog,
+    .abono-overlay {
+        animation: none;
+    }
+}
